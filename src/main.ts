@@ -1,24 +1,24 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { ValidationPipe } from '@nestjs/common';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // Swagger konfigurálása
+  // Swagger konfiguráció
   const config = new DocumentBuilder()
-    .setTitle('Autókölcsönző API')
-    .setDescription('Autókölcsönző weboldal és mobil applikáció API dokumentáció')
+    .setTitle('Autós Bérlés API')
+    .setDescription('Autós bérlés alkalmazás API dokumentációja')
     .setVersion('1.0')
-    .addTag('cars')
-    .addTag('users')
-    .addTag('bookings')
+    .addBearerAuth() 
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document);
+  SwaggerModule.setup('api', app, document); 
+
+  app.useGlobalPipes(new ValidationPipe()); 
 
   await app.listen(3000);
 }
-
 bootstrap();

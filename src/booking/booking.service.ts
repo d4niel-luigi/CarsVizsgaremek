@@ -1,50 +1,38 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
+import { CreateBookingDto } from './dto/create-booking.dto';
+import { UpdateBookingDto } from './dto/update-booking.dto';
 
 @Injectable()
-export class BookingService {
-  constructor(private readonly prisma: PrismaService) {}
+export class BookingsService {
+  constructor(private readonly db: PrismaService) {}
 
-  /**
-   * Felhasználó új foglalásának létrehozása
-   * @param createBookingDto A foglalás adatai
-   * @returns JSON válasz a létrehozott foglalásról
-   */
-  async create(createBookingDto: { carId: number, userId: number, startDate: string, endDate: string }) {
-    return await this.prisma.booking.create({
-      data: {
-        carId: createBookingDto.carId,
-        userId: createBookingDto.userId,
-        startDate: new Date(createBookingDto.startDate),
-        endDate: new Date(createBookingDto.endDate),
-      },
+  create(createBookingDto: CreateBookingDto) {
+    return this.db.booking.create({
+      data: createBookingDto,
     });
   }
 
-  /**
-   * Felhasználó foglalásainak lekérése
-   * @param userId A felhasználó ID-ja
-   * @returns JSON válasz a felhasználó foglalásairól
-   */
-  async findByUser(userId: number) {
-    return this.prisma.booking.findMany({
-      where: { userId },
-      include: {
-        car: true,
-      },
+  findAll() {
+    return this.db.booking.findMany();
+  }
+
+  findOne(id: number) {
+    return this.db.booking.findUnique({
+      where: { id },
     });
   }
 
-  /**
-   * Admin számára az összes foglalás lekérése
-   * @returns JSON válasz az összes foglalásról
-   */
-  async findAll() {
-    return this.prisma.booking.findMany({
-      include: {
-        car: true,
-        user: true,
-      },
+  update(id: number, updateBookingDto: UpdateBookingDto) {
+    return this.db.booking.update({
+      where: { id },
+      data: updateBookingDto,
+    });
+  }
+
+  remove(id: number) {
+    return this.db.booking.delete({
+      where: { id },
     });
   }
 }

@@ -1,42 +1,46 @@
-import { Controller, Get, Post, Body, Param } from '@nestjs/common';
-import { BookingService } from './booking.service';
-import { ApiResponse, ApiParam, ApiBearerAuth } from '@nestjs/swagger';
+import { Controller, Get, Post, Body, Param, Patch, Delete } from '@nestjs/common';
+import { BookingsService } from './booking.service';
+import { CreateBookingDto } from './dto/create-booking.dto';
+import { UpdateBookingDto } from './dto/update-booking.dto';
+import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 
-@Controller('booking')
-@ApiBearerAuth()
-export class BookingController {
-  constructor(private readonly bookingService: BookingService) {}
+@ApiTags('bookings')
+@Controller('bookings')
+export class BookingsController {
+  constructor(private readonly bookingsService: BookingsService) {}
 
-  /**
-   * Felhasználó új foglalásának létrehozása
-   * @param createBookingDto A foglalás adatai
-   * @returns JSON válasz
-   */
   @Post()
-  @ApiResponse({ status: 201, description: 'Booking created successfully' })
-  create(@Body() createBookingDto: { carId: number, userId: number, startDate: string, endDate: string }) {
-    return this.bookingService.create(createBookingDto);
+  @ApiOperation({ summary: 'Foglalás létrehozása' })
+  @ApiResponse({ status: 201, description: 'Foglalás sikeresen létrehozva.' })
+  create(@Body() createBookingDto: CreateBookingDto) {
+    return this.bookingsService.create(createBookingDto);
   }
 
-  /**
-   * Felhasználó foglalásainak lekérése
-   * @param userId A felhasználó ID-ja
-   * @returns JSON válasz
-   */
-  @Get('user/:userId')
-  @ApiParam({ name: 'userId', description: 'A felhasználó egyedi azonosítója' })
-  @ApiResponse({ status: 200, description: 'Foglalások lekérdezése sikeres' })
-  findByUser(@Param('userId') userId: number) {
-    return this.bookingService.findByUser(userId);
-  }
-
-  /**
-   * Admin számára az összes foglalás lekérése
-   * @returns JSON válasz
-   */
   @Get()
-  @ApiResponse({ status: 200, description: 'Minden foglalás lekérése sikeres' })
+  @ApiOperation({ summary: 'Foglalások listázása' })
+  @ApiResponse({ status: 200, description: 'Foglalások listája.' })
   findAll() {
-    return this.bookingService.findAll();
+    return this.bookingsService.findAll();
+  }
+
+  @Get(':id')
+  @ApiOperation({ summary: 'Foglalás lekérése' })
+  @ApiResponse({ status: 200, description: 'Foglalás adatai.' })
+  findOne(@Param('id') id: string) {
+    return this.bookingsService.findOne(+id);
+  }
+
+  @Patch(':id')
+  @ApiOperation({ summary: 'Foglalás módosítása' })
+  @ApiResponse({ status: 200, description: 'Foglalás sikeresen módosítva.' })
+  update(@Param('id') id: string, @Body() updateBookingDto: UpdateBookingDto) {
+    return this.bookingsService.update(+id, updateBookingDto);
+  }
+
+  @Delete(':id')
+  @ApiOperation({ summary: 'Foglalás törlése' })
+  @ApiResponse({ status: 200, description: 'Foglalás sikeresen törölve.' })
+  remove(@Param('id') id: string) {
+    return this.bookingsService.remove(+id);
   }
 }

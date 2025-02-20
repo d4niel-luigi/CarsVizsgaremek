@@ -1,31 +1,47 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Patch, Delete } from '@nestjs/common';
 import { CarsService } from './cars.service';
-import { ApiResponse, ApiParam, ApiBearerAuth } from '@nestjs/swagger';
+import { CreateCarDto } from './dto/create-car.dto';
+import { UpdateCarDto } from './dto/update-car.dto';
+import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 
+@ApiTags('cars')
 @Controller('cars')
-@ApiBearerAuth()
 export class CarsController {
   constructor(private readonly carsService: CarsService) {}
 
-  /**
-   * Minden autó lekérése
-   * @returns JSON válasz
-   */
+  @Post()
+  @ApiOperation({ summary: 'Jármű létrehozása' })
+  @ApiResponse({ status: 201, description: 'Jármű sikeresen létrehozva.' })
+  @ApiResponse({ status: 400, description: 'Hibás bemenet' })
+  create(@Body() createCarDto: CreateCarDto) {
+    return this.carsService.create(createCarDto);
+  }
+
   @Get()
-  @ApiResponse({ status: 200, description: 'Autók lekérdezése sikeres' })
+  @ApiOperation({ summary: 'Járművek listázása' })
+  @ApiResponse({ status: 200, description: 'Járművek listája.' })
   findAll() {
     return this.carsService.findAll();
   }
 
-  /**
-   * Egy autó lekérése ID alapján
-   * @param id Az autó egyedi azonosítója
-   * @returns JSON válasz
-   */
   @Get(':id')
-  @ApiParam({ name: 'id', description: 'Az autó egyedi azonosítója' })
-  @ApiResponse({ status: 200, description: 'Autó lekérdezése sikeres' })
-  findOne(@Param('id') id: number) {
-    return this.carsService.findOne(id);
+  @ApiOperation({ summary: 'Jármű lekérése' })
+  @ApiResponse({ status: 200, description: 'Jármű adatai.' })
+  findOne(@Param('id') id: string) {
+    return this.carsService.findOne(+id);
+  }
+
+  @Patch(':id')
+  @ApiOperation({ summary: 'Jármű módosítása' })
+  @ApiResponse({ status: 200, description: 'Jármű sikeresen módosítva.' })
+  update(@Param('id') id: string, @Body() updateCarDto: UpdateCarDto) {
+    return this.carsService.update(+id, updateCarDto);
+  }
+
+  @Delete(':id')
+  @ApiOperation({ summary: 'Jármű törlése' })
+  @ApiResponse({ status: 200, description: 'Jármű sikeresen törölve.' })
+  remove(@Param('id') id: string) {
+    return this.carsService.remove(+id);
   }
 }
