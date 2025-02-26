@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client'
-import { fa, faker } from '@faker-js/faker'
+import { faker } from '@faker-js/faker'
 const prisma = new PrismaClient()
 
 async function main() {
@@ -13,8 +13,7 @@ async function main() {
  const user2 = await prisma.user.create({
   data: {
     email: faker.internet.email(),
-    password: faker.internet.password(),
-    isAdmin: false
+    password: faker.internet.password()
   }
  })
  const booking = await prisma.booking.create({
@@ -64,7 +63,7 @@ async function rawSql() {
   (33, 'BMW ', '5 Series', 'Comfort', 5, 3, 'Petrol', 'Automatic', 35000,1),
   (34, 'Honda', 'Accord', 'Comfort', 5, 4, 'Petrol', 'Manual', 28500,1),
   (35, 'Mercedes', 'C-Class CLA 63', 'Comfort', 5, 3, 'Petrol', 'Automatic', 41000,1),
-  (36, 'Ford', 'Mondeo', 'Comfort', 5, 4, 'Diesel', 'Automatic', 29000,1n); ON CONFLICT DO NOTHING;`
+  (36, 'Ford', 'Mondeo', 'Comfort', 5, 4, 'Diesel', 'Automatic', 29000,1); ON CONFLICT DO NOTHING;`
   console.log({ result })
 }
 
