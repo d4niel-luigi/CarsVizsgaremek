@@ -1,5 +1,6 @@
 import { PrismaClient } from '@prisma/client'
 import { faker } from '@faker-js/faker'
+import * as argon2 from 'argon2';
 const prisma = new PrismaClient()
 
 async function main() {
@@ -7,14 +8,14 @@ async function main() {
   const user1 = await prisma.user.create({
     data: {
       email: faker.internet.email(),
-      password: faker.internet.password(),
+      password: await argon2.hash(process.env.ADMIN_PASS!),
       isAdmin: true
     }
   })
  const user2 = await prisma.user.create({
   data: {
     email: faker.internet.email(),
-    password: faker.internet.password()
+    password: await argon2.hash('user')
   }
  })
  const booking = await prisma.booking.create({
