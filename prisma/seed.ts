@@ -3,6 +3,7 @@ import { faker } from '@faker-js/faker'
 const prisma = new PrismaClient()
 
 async function main() {
+  await rawSql();
   const user1 = await prisma.user.create({
     data: {
       email: faker.internet.email(),
@@ -27,7 +28,7 @@ async function main() {
 }
 
 async function rawSql() {
-  const result = await prisma.$executeRaw`INSERT INTO "cars" ("id", "manufacturer", "model", "type", "number_of_seats", "number_of_suitcases", "fuel_type", "clutch_type", "price_for_one_day","is_available") VALUES
+  const result = await prisma.$executeRaw`INSERT INTO cars (id, manufacturer, model, type, number_of_seats, number_of_suitcases, fuel_type, clutch_type, price_for_one_day,is_available) VALUES
   (1, 'Toyota', 'Aygo', 'Economical ', 5, 2, 'Petrol', 'Manual', 5000, 1),
   (2, 'Opel', 'Corsa', 'Economical ', 5, 1, 'Petrol', 'Automatic', 6500,1),
   (3, 'Citroen ', 'C2', 'Economical', 4, 1, 'Petrol', 'Manual', 7000,1),
@@ -63,12 +64,11 @@ async function rawSql() {
   (33, 'BMW ', '5 Series', 'Comfort', 5, 3, 'Petrol', 'Automatic', 35000,1),
   (34, 'Honda', 'Accord', 'Comfort', 5, 4, 'Petrol', 'Manual', 28500,1),
   (35, 'Mercedes', 'C-Class CLA 63', 'Comfort', 5, 3, 'Petrol', 'Automatic', 41000,1),
-  (36, 'Ford', 'Mondeo', 'Comfort', 5, 4, 'Diesel', 'Automatic', 29000,1); ON CONFLICT DO NOTHING;`
+  (36, 'Ford', 'Mondeo', 'Comfort', 5, 4, 'Diesel', 'Automatic', 29000,1);`
   console.log({ result })
 }
 
 main()
-  .then(rawSql)
   .then(async () => {
     await prisma.$disconnect()
   })
